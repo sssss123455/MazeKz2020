@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebMaze.DbStuff.Model;
+using WebMaze.DbStuff.Model.Morgue;
 using WebMaze.DbStuff.Model.Police;
 
 namespace WebMaze.DbStuff
@@ -26,6 +27,10 @@ namespace WebMaze.DbStuff
 
         public DbSet<UserTask> UserTasks { get; set; }
 
+        public DbSet<RegisterCardForMorgue> RegisterCardForMorgue { get; set; }
+        public DbSet<ForensicReport> ForensicReport { get; set; }
+        public DbSet<BodyIdentificationReport> BodyIdentificationReport { get; set; }
+        public DbSet<RitualService> RitualService { get; set; }
         public WebMazeContext(DbContextOptions dbContext) : base(dbContext) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,7 +44,17 @@ namespace WebMaze.DbStuff
             modelBuilder.Entity<CitizenUser>()
                 .HasMany(citizen => citizen.Adresses)
                 .WithOne(adress => adress.Owner);
-
+            modelBuilder.Entity<RegisterCardForMorgue>()
+                .HasOne(corpse => corpse.ForensicReport)
+                .WithOne(report => report.Corpse)
+                .HasForeignKey<ForensicReport>(key => key.CorpseId);
+            modelBuilder.Entity<RegisterCardForMorgue>()
+                .HasOne(corpse => corpse.BodyIdentificationReport)
+                .WithOne(date => date.Corpse)
+                .HasForeignKey<BodyIdentificationReport>(key => key.CorpseId);
+            modelBuilder.Entity<RitualService>()
+                .HasMany(sevice => sevice.Corpses)
+                .WithOne(corpse => corpse.RitualService);
             base.OnModelCreating(modelBuilder);
         }
     }

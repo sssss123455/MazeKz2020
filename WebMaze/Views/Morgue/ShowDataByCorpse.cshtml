@@ -1,0 +1,52 @@
+﻿@using WebMaze.Models.Morgue
+@model DataByCorpseViewModel
+    <div>
+        @Html.DisplayNameFor(x=>x.Corpse)
+        <div>
+            @Html.DisplayNameFor(x => x.Corpse.Name): @Model.Corpse.Name
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Corpse.Surname): @Model.Corpse.Surname
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Corpse.DateOfDeath): @Model.Corpse.DateOfDeath.ToString("dd/MM/yyyy HH:mm")
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Corpse.BodyDamage): @Model.Corpse.BodyDamage
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Corpse.ThingsFromBody): @Model.Corpse.ThingsFromBody
+        </div>
+    </div>
+    <hr />
+    <div>
+        @Html.DisplayNameFor(x=>x.Report)
+        <div>
+            @Html.DisplayNameFor(x=>x.Report.CauseOfDeath): @Model.Report.CauseOfDeath
+        </div>
+        <div>
+            @Html.DisplayNameFor(x=>x.Report.Comment): @Model.Report.Comment
+        </div>
+        <div>
+            @Html.DisplayNameFor(x=>x.Report.DateOfForensic): @Model.Report.DateOfForensic.ToString("dd/MM/yyyy HH:mm")
+        </div>
+    </div>
+    <hr />
+    <div>
+        @Html.DisplayNameFor(x => x.Identification)
+        <div>
+            @Html.DisplayNameFor(x => x.Identification.DateOfIdentification): @Model.Identification.DateOfIdentification.ToString("dd/MM/yyyy HH:mm")
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Identification.PoliceOfficerName): @Model.Identification.PoliceOfficerName
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Identification.PoliceOfficerSurname): @Model.Identification.PoliceOfficerSurname
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Identification.IdentifyingPersonName): @Model.Identification.IdentifyingPersonName
+        </div>
+        <div>
+            @Html.DisplayNameFor(x => x.Identification.IdentifyingPersonSurname): @Model.Identification.IdentifyingPersonSurname
+        </div>
+    </div>

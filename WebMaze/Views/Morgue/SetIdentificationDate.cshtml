@@ -1,0 +1,15 @@
+﻿@using WebMaze.Models.Morgue
+@model  IdentificationDateViewModel
+
+<form action="@Url.Action("SetIdentificationDate", "Morgue")" method="post">
+    @Html.HiddenFor(x=>x.CorpseId)
+    <div>
+        @Html.DisplayNameFor(x => x.DateOfIdentification)
+        @Html.EditorFor(x => x.DateOfIdentification)
+        @Html.ValidationMessageFor(x => x.DateOfIdentification)
+
+    </div>
+    <div>
+        <input type="submit" value="Сохронить" />
+    </div>
+</form>

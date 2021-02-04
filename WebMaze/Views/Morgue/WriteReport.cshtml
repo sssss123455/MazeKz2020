@@ -1,0 +1,31 @@
+﻿@using WebMaze.Models.Morgue
+@model ForensicReportViewModel
+<form action="@Url.Action("WriteReport", "Morgue")" method="post">
+    @Html.HiddenFor(x => x.CorpseId)
+    @Html.HiddenFor(x => x.DateOfForensic)
+    <div>
+        @Html.DisplayNameFor(x=>x.Pathologist)
+        <div>
+            Имя: @Model.Pathologist.FirstName
+        </div>
+        <div>
+            Фамилия: @Model.Pathologist.LastName
+        </div>
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.CauseOfDeath):
+        @Html.TextBoxFor(x => x.CauseOfDeath)
+        @Html.ValidationMessageFor(x => x.CauseOfDeath)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Comment):
+        @Html.TextBoxFor(x => x.Comment)
+        @Html.ValidationMessageFor(x => x.Comment)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.DateOfForensic): @Model.DateOfForensic
+    </div>
+    <div>
+        <input type="submit" value="Сохронить" />
+    </div>
+</form>

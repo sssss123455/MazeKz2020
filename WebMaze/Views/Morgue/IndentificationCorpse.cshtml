@@ -1,0 +1,38 @@
+﻿@using WebMaze.Models.Morgue
+@model BodyIdentificationReportViewModel
+<form action="@Url.Action("IndentificationCorpse","Morgue")" method="post">
+    @Html.HiddenFor(x => x.CorpseId)
+    @Html.HiddenFor(x => x.DateOfIdentification)
+    @Html.HiddenFor(x => x.Id)
+    <div>
+        @Html.DisplayNameFor(x => x.PoliceOfficerId):
+        @Html.TextBoxFor(x => x.PoliceOfficerId)
+        @Html.ValidationMessageFor(x => x.PoliceOfficerId)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.IdentifyingPersonId):
+        @Html.TextBoxFor(x => x.IdentifyingPersonId)
+        @Html.ValidationMessageFor(x => x.IdentifyingPersonId)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.IsIdentified):
+        @Html.RadioButtonFor(x => x.IsIdentified, "true")@Html.Label("опознан(-а):")
+        @Html.RadioButtonFor(x => x.IsIdentified, "false")@Html.Label("не опознан(-а):")
+        @Html.ValidationMessageFor(x => x.IsIdentified)
+    </div>
+    @if (Model.UserId==0)
+    {
+    <div>
+        @Html.DisplayNameFor(x => x.UserId):
+        @Html.EditorFor(x => x.UserId)
+        @Html.ValidationMessageFor(x=>x.UserId)
+    </div>
+    }
+    else 
+    {
+        @Html.HiddenFor(x=>x.UserId)
+    }
+    <div>
+        <input type="submit" value="Сохронить" />
+    </div>
+</form>
