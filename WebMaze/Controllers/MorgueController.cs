@@ -10,6 +10,7 @@ using WebMaze.DbStuff.Model.Morgue;
 using WebMaze.DbStuff.Repository;
 using WebMaze.DbStuff.Repository.Morgue;
 using WebMaze.Models.Morgue;
+using WebMaze.Services;
 
 namespace WebMaze.Controllers
 {
@@ -22,9 +23,11 @@ namespace WebMaze.Controllers
         private BodyIdentificationReportRepository bodyIdentificationReportRepository;
         private IHttpContextAccessor httpContextAccessor;
         private CitizenUserRepository citizenUserRepository;
+        private UserService userService;
         public MorgueController(IMapper mapper, RegisterCardForMorgueRepository registerCardForMorgueRepository,
             ForensicReportRepository forensicReportRepository, BodyIdentificationReportRepository bodyIdentificationReportRepository,
-            IHttpContextAccessor httpContextAccessor, CitizenUserRepository citizenUserRepository)
+            IHttpContextAccessor httpContextAccessor, CitizenUserRepository citizenUserRepository,
+            UserService userService)
         {
             this.registerCardForMorgueRepository = registerCardForMorgueRepository;
             this.mapper = mapper;
@@ -32,6 +35,7 @@ namespace WebMaze.Controllers
             this.bodyIdentificationReportRepository = bodyIdentificationReportRepository;
             this.httpContextAccessor = httpContextAccessor;
             this.citizenUserRepository = citizenUserRepository;
+            this.userService = userService;
         }
         [IsMorgue]
         [Authorize]
@@ -73,11 +77,8 @@ namespace WebMaze.Controllers
                 return View(viewModel);
             }
             viewModel.IsReportRecorded = true;
-            var idStr = httpContextAccessor.HttpContext.
-                User.Claims.SingleOrDefault(x => x.Type == "Id")?.Value;
-            var expertId = int.Parse(idStr);
-            var expert = citizenUserRepository.Get(expertId);
-            viewModel.Pathologist = citizenUserRepository.Get(expertId);
+            var expert = userService.GetCurrentUser();
+            viewModel.Pathologist = citizenUserRepository.Get(expert.Id);
             var report = mapper.Map<ForensicReport>(viewModel);
             forensicReportRepository.Save(report);
             return RedirectToAction("ShowReport", "Morgue", new { corpseId = viewModel.CorpseId });
