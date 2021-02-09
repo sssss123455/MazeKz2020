@@ -35,7 +35,7 @@ namespace WebMaze
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WebMazeKz;Trusted_Connection=True;";
+            var connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WebMazeKz;Trusted_Connection=True;MultipleActiveResultSets=True;";
             services.AddDbContext<WebMazeContext>(option => option.UseSqlServer(connectionString));
 
             services.AddAuthentication(AuthMethod)
@@ -107,6 +107,12 @@ namespace WebMaze
             configurationExpression.CreateMap<ForensicReport, ForensicReportViewModel>();
             configurationExpression.CreateMap<ForensicReportViewModel, ForensicReport>();
 
+            configurationExpression.CreateMap<CitizenUser, CitizenUserViewModel>();
+            configurationExpression.CreateMap<CitizenUserViewModel, CitizenUser>();
+
+            configurationExpression.CreateMap<RitualService, RitualServiceViewModel>();
+            configurationExpression.CreateMap<RitualServiceViewModel, RitualService>();
+
             configurationExpression.CreateMap<BodyIdentificationReport, BodyIdentificationReportViewModel>()
                 .ForPath(x => x.PoliceOfficerName, y => y.MapFrom(z => z.PoliceOfficer.FirstName))
                 .ForPath(x => x.PoliceOfficerSurname, y => y.MapFrom(z => z.PoliceOfficer.LastName))
@@ -118,9 +124,20 @@ namespace WebMaze
                 .ForPath(x => x.IdentifyingPerson.FirstName, y => y.MapFrom(z => z.IdentifyingPersonName))
                 .ForPath(x => x.IdentifyingPerson.LastName, y => y.MapFrom(z => z.IdentifyingPersonSurname));
 
+            configurationExpression.CreateMap<RegisterCardForMorgue, YourCorpsesViewModel>()
+                .ForPath(x => x.NameCorpse, y => y.MapFrom(z => z.Corpse.FirstName))
+                .ForPath(x => x.SurnameCorpse, y => y.MapFrom(z => z.Corpse.LastName))
+                .ForPath(x => x.DateOfDeath, y => y.MapFrom(z => z.DateOfDeath))
+                .ForPath(x => x.Id, y => y.MapFrom(z => z.Id));
+
             configurationExpression.CreateMap<BodyIdentificationReport, IdentificationDateViewModel>();
             configurationExpression.CreateMap<IdentificationDateViewModel, BodyIdentificationReport>();
 
+            configurationExpression.CreateMap<Funeral, FuneralViewModel>()
+                .ForPath(x=>x.RitualServiceId,y=>y.MapFrom(z=>z.RitualService.Id));
+            configurationExpression.CreateMap<FuneralViewModel, Funeral>();
+               
+            
             var mapperConfiguration = new MapperConfiguration(configurationExpression);
             var mapper = new Mapper(mapperConfiguration);
             services.AddScoped<IMapper>(s => mapper);
@@ -150,6 +167,7 @@ namespace WebMaze
             services.AddScoped(s => new ForensicReportRepository(s.GetService<WebMazeContext>()));
             services.AddScoped(s => new BodyIdentificationReportRepository(s.GetService<WebMazeContext>()));
             services.AddScoped(s => new RitualServiceRepository(s.GetService<WebMazeContext>()));
+            services.AddScoped(s => new FuneralRepository(s.GetService<WebMazeContext>()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

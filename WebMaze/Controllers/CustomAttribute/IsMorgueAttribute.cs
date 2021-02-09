@@ -15,7 +15,7 @@ namespace WebMaze.Controllers.CustomAttribute
             var userSerivece = context.HttpContext.RequestServices
                 .GetService(typeof(UserService)) as UserService;
 
-            if (userSerivece.GetCurrentUser().Role?.ToLower() != "morgue")
+            if (userSerivece.GetCurrentUser().Position?.ToLower() != "morgue")
             {
                 context.Result = new ForbidResult();
             }

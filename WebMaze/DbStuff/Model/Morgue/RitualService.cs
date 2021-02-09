@@ -9,6 +9,9 @@ namespace WebMaze.DbStuff.Model.Morgue
     public class RitualService:BaseModel
     {
         public virtual BurialTypes BurialType { get; set; }
+        public virtual decimal Price { get; set; }
+        public virtual string Description { get; set; }
+        public virtual string UrlPhoto { get; set; }
         public enum BurialTypes
         {
             [Display(Name = "Ингумация")]
@@ -16,9 +19,5 @@ namespace WebMaze.DbStuff.Model.Morgue
             [Display(Name = "Кремация")]
             cremation
         };
-        public virtual decimal Price { get; set; }
-        public virtual string Description { get; set; }
-        public virtual string UrlPhoto { get; set; }
-        public virtual List<RegisterCardForMorgue> Corpses { get; set; }
     }
 }

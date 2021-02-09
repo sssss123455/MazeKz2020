@@ -11,9 +11,9 @@ namespace WebMaze.DbStuff.Repository.Morgue
         public ForensicReportRepository(WebMazeContext context) : base(context)
         {
         }
-        public ForensicReport GetReport(long id)
+        public ForensicReport GetReport(long corpseId)
         {
-            return dbSet.SingleOrDefault(x => x.CorpseId == id);
+            return dbSet.SingleOrDefault(x => x.CorpseId == corpseId);
         }
     }  
 }

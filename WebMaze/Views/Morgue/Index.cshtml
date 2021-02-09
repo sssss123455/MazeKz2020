@@ -1,1 +1,11 @@
-﻿<div>@Html.ActionLink("показать список тел","ShowCorpse","Morgue")</div>
+﻿@if (User.Claims.SingleOrDefault(x => x.Type == "Position")?.Value == "morgue")
+{
+    <div>@Html.ActionLink("показать список тел", "ShowCorpse", "Morgue")</div>
+    <div>@Html.ActionLink("добавить ритуальную услугу", "AddRitualService", "Morgue")</div>
+}
+
+<div>@Html.ActionLink("показать услуги", "ShowRitualService", "Morgue")</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <div>@Html.ActionLink("ваши погибшие", "Home", "Morgue")</div>
+}

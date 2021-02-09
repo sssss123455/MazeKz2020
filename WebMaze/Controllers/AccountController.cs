@@ -4,14 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using WebMaze.DbStuff;
 using WebMaze.DbStuff.Model;
 using WebMaze.DbStuff.Repository;
 using WebMaze.Models.Account;
@@ -61,10 +57,17 @@ namespace WebMaze.Controllers
             //Строки в документе
             var recordId = new Claim("Id", user.Id.ToString());
             var recordName = new Claim(ClaimTypes.Name, user.Login);
+            var position = "user";
+            if (user.Position != null)
+            {
+                position = user.Position;
+            }
+            var recordPosition = new Claim("Position", position);
+
             var recordAuthMethod = new Claim(ClaimTypes.AuthenticationMethod, Startup.AuthMethod);
 
             //Страница в документе
-            var page = new List<Claim>() { recordId, recordName, recordAuthMethod };
+            var page = new List<Claim>() { recordId, recordName, recordPosition, recordAuthMethod };
 
             //Документ
             var claimsIdentity = new ClaimsIdentity(page, Startup.AuthMethod);
@@ -83,7 +86,7 @@ namespace WebMaze.Controllers
                 return Redirect(loginViewModel.ReturnUrl);
             }
 
-            
+
         }
 
         [HttpGet]
@@ -122,7 +125,7 @@ namespace WebMaze.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -150,7 +153,7 @@ namespace WebMaze.Controllers
 
             return RedirectToAction("Profile", new { id = viewModel.Id });
         }
-    
+
         [HttpGet]
         public IActionResult AddAdress(long userId)
         {

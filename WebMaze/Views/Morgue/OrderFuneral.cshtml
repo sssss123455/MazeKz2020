@@ -1,0 +1,19 @@
+﻿@using WebMaze.Models.Morgue
+@model FuneralViewModel
+<form action="@Url.Action("OrderFuneral", "Morgue")" method="post">
+
+    @Html.HiddenFor(x => x.CorpseId)
+    @Html.HiddenFor(x => x.RitualServiceId)
+    <div>
+        @Html.DisplayNameFor(x => x.DateOfFuneral)
+        @Html.EditorFor(x => x.DateOfFuneral)
+        @Html.ValidationMessageFor(x => x.DateOfFuneral)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Comment)
+        @Html.TextAreaFor(x => x.Comment)
+    </div>
+    <div>
+        <input type="submit" value="Отправить" />
+    </div>
+</form>

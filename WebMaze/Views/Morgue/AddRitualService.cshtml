@@ -1,0 +1,26 @@
+﻿@using WebMaze.Models.Morgue
+@model RitualServiceViewModel
+<form action="@Url.Action("AddRitualService", "Morgue")" method="post" enctype="multipart/form-data">
+    <div>
+        @Html.DisplayNameFor(x => x.BurialType)
+        @Html.TextBoxFor(x => x.BurialType)
+        @Html.ValidationMessageFor(x => x.BurialType)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Price)
+        @Html.TextBoxFor(x => x.Price)
+        @Html.ValidationMessageFor(x => x.Price)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Description)
+        @Html.TextBoxFor(x => x.Description)
+        @Html.ValidationMessageFor(x => x.Description)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.UrlPhoto)
+        <input type="file" name="Photo" />
+    </div>
+    <div>
+        <input type="submit" value="Сохранить" />
+    </div>
+</form>

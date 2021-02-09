@@ -1,0 +1,30 @@
+﻿@using WebMaze.Models.Morgue
+@model List<RitualServiceViewModel>
+    <table>
+        <tr>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().BurialType)</td>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Description)</td>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().UrlPhoto)</td>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Price)</td>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.BurialType
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    <img src="@item.UrlPhoto" />
+                </td>
+                <td>
+                    @item.Price
+                </td>
+                <td>
+                    <div>@Html.ActionLink("Выбрать", "OrderFuneral", "Morgue", new { corpseId = ViewBag.corpseId,serviceId=item.Id })</div>
+                </td>
+            </tr>
+        }
+    </table>

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebMaze.DbStuff;
 
 namespace WebMaze.Migrations
 {
     [DbContext(typeof(WebMazeContext))]
-    partial class WebMazeContextModelSnapshot : ModelSnapshot
+    [Migration("20210205065455_addPositonForuser")]
+    partial class addPositonForuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,35 +247,6 @@ namespace WebMaze.Migrations
                     b.ToTable("ForensicReport");
                 });
 
-            modelBuilder.Entity("WebMaze.DbStuff.Model.Morgue.Funeral", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("CorpseId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("DateOfFuneral")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("RitualServiceId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CorpseId")
-                        .IsUnique();
-
-                    b.HasIndex("RitualServiceId");
-
-                    b.ToTable("Funeral");
-                });
-
             modelBuilder.Entity("WebMaze.DbStuff.Model.Morgue.RegisterCardForMorgue", b =>
                 {
                     b.Property<long>("Id")
@@ -296,12 +269,17 @@ namespace WebMaze.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<long?>("RitualServiceId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("ThingsFromBody")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CorpseId");
+
+                    b.HasIndex("RitualServiceId");
 
                     b.ToTable("RegisterCardForMorgue");
                 });
@@ -494,30 +472,19 @@ namespace WebMaze.Migrations
                     b.Navigation("Pathologist");
                 });
 
-            modelBuilder.Entity("WebMaze.DbStuff.Model.Morgue.Funeral", b =>
-                {
-                    b.HasOne("WebMaze.DbStuff.Model.Morgue.RegisterCardForMorgue", "Corpse")
-                        .WithOne("Funeral")
-                        .HasForeignKey("WebMaze.DbStuff.Model.Morgue.Funeral", "CorpseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebMaze.DbStuff.Model.Morgue.RitualService", "RitualService")
-                        .WithMany()
-                        .HasForeignKey("RitualServiceId");
-
-                    b.Navigation("Corpse");
-
-                    b.Navigation("RitualService");
-                });
-
             modelBuilder.Entity("WebMaze.DbStuff.Model.Morgue.RegisterCardForMorgue", b =>
                 {
                     b.HasOne("WebMaze.DbStuff.Model.CitizenUser", "Corpse")
                         .WithMany()
                         .HasForeignKey("CorpseId");
 
+                    b.HasOne("WebMaze.DbStuff.Model.Morgue.RitualService", "RitualService")
+                        .WithMany("Corpses")
+                        .HasForeignKey("RitualServiceId");
+
                     b.Navigation("Corpse");
+
+                    b.Navigation("RitualService");
                 });
 
             modelBuilder.Entity("WebMaze.DbStuff.Model.Police.Policeman", b =>
@@ -560,8 +527,11 @@ namespace WebMaze.Migrations
                     b.Navigation("BodyIdentificationReport");
 
                     b.Navigation("ForensicReport");
+                });
 
-                    b.Navigation("Funeral");
+            modelBuilder.Entity("WebMaze.DbStuff.Model.Morgue.RitualService", b =>
+                {
+                    b.Navigation("Corpses");
                 });
 
             modelBuilder.Entity("WebMaze.DbStuff.Model.Police.ViolationType", b =>

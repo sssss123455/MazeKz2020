@@ -17,7 +17,7 @@ namespace WebMaze.Models.Morgue
         [Display(Name ="Дата проведения")]
         public  DateTime DateOfForensic { get; set; }
         [Display(Name = "Данные патологоанатома")]
-        public CitizenUser Pathologist { get; set; }
+        public CitizenUserViewModel Pathologist { get; set; }
         public  bool IsReportRecorded { get; set; }
         public long CorpseId { get; set; }
 

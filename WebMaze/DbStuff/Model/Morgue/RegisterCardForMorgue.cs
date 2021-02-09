@@ -16,7 +16,7 @@ namespace WebMaze.DbStuff.Model.Morgue
         public virtual string ThingsFromBody { get; set; }
         public virtual ForensicReport ForensicReport { get; set; }
         public virtual BodyIdentificationReport BodyIdentificationReport { get; set; }
-        public virtual RitualService RitualService { get; set; }
+        public virtual Funeral Funeral { get; set; }
         public enum Genders 
         {
         [Display(Name ="Мужской")]

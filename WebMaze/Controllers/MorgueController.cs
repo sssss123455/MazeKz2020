@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Threading.Tasks;
 using WebMaze.Controllers.CustomAttribute;
 using WebMaze.DbStuff.Model.Morgue;
 using WebMaze.DbStuff.Repository;
@@ -21,30 +23,31 @@ namespace WebMaze.Controllers
         private RegisterCardForMorgueRepository registerCardForMorgueRepository;
         private ForensicReportRepository forensicReportRepository;
         private BodyIdentificationReportRepository bodyIdentificationReportRepository;
-        private IHttpContextAccessor httpContextAccessor;
         private CitizenUserRepository citizenUserRepository;
         private UserService userService;
+        private RitualServiceRepository ritualServiceRepository;
+        private IWebHostEnvironment hostEnvironment;
+        private FuneralRepository funeralRepository;
         public MorgueController(IMapper mapper, RegisterCardForMorgueRepository registerCardForMorgueRepository,
             ForensicReportRepository forensicReportRepository, BodyIdentificationReportRepository bodyIdentificationReportRepository,
-            IHttpContextAccessor httpContextAccessor, CitizenUserRepository citizenUserRepository,
-            UserService userService)
+            CitizenUserRepository citizenUserRepository, UserService userService, 
+            RitualServiceRepository ritualServiceRepository, IWebHostEnvironment hostEnvironment,
+            FuneralRepository funeralRepository)
         {
             this.registerCardForMorgueRepository = registerCardForMorgueRepository;
             this.mapper = mapper;
             this.forensicReportRepository = forensicReportRepository;
             this.bodyIdentificationReportRepository = bodyIdentificationReportRepository;
-            this.httpContextAccessor = httpContextAccessor;
             this.citizenUserRepository = citizenUserRepository;
             this.userService = userService;
+            this.ritualServiceRepository = ritualServiceRepository;
+            this.hostEnvironment = hostEnvironment;
+            this.funeralRepository = funeralRepository;
         }
-        [IsMorgue]
-        [Authorize]
         public IActionResult Index()
         {
-
             return View();
         }
-        [Authorize]
         [IsMorgue]
         public IActionResult ShowCorpse()
         {
@@ -53,22 +56,17 @@ namespace WebMaze.Controllers
             return View(viewModel);
         }
         [IsMorgue]
-        [Authorize]
         [HttpGet]
         public IActionResult WriteReport(long corpseId)
         {
             var viewModel = new ForensicReportViewModel();
             viewModel.CorpseId = corpseId;
-            var idStr = httpContextAccessor.HttpContext.
-                User.Claims.SingleOrDefault(x => x.Type == "Id")?.Value;
-            var expertId = int.Parse(idStr);
-            var expert = citizenUserRepository.Get(expertId);
-            viewModel.Pathologist = citizenUserRepository.Get(expertId);
+            var pathologist = mapper.Map<CitizenUserViewModel>(userService.GetCurrentUser());
+            viewModel.Pathologist = pathologist;
             viewModel.DateOfForensic = DateTime.Now;
             return View(viewModel);
         }
         [IsMorgue]
-        [Authorize]
         [HttpPost]
         public IActionResult WriteReport(ForensicReportViewModel viewModel)
         {
@@ -78,13 +76,13 @@ namespace WebMaze.Controllers
             }
             viewModel.IsReportRecorded = true;
             var expert = userService.GetCurrentUser();
-            viewModel.Pathologist = citizenUserRepository.Get(expert.Id);
+            var user = citizenUserRepository.Get(expert.Id);
+            viewModel.Pathologist = mapper.Map<CitizenUserViewModel>(user);
             var report = mapper.Map<ForensicReport>(viewModel);
             forensicReportRepository.Save(report);
             return RedirectToAction("ShowReport", "Morgue", new { corpseId = viewModel.CorpseId });
         }
         [IsMorgue]
-        [Authorize]
         public IActionResult ShowReport(long corpseId)
         {
             var corpse = registerCardForMorgueRepository.Get(corpseId);
@@ -94,7 +92,6 @@ namespace WebMaze.Controllers
             return View(viewModel);
         }
         [IsMorgue]
-        [Authorize]
         [HttpGet]
         public IActionResult SetIdentificationDate(long corpseId)
         {
@@ -104,7 +101,6 @@ namespace WebMaze.Controllers
             return View(viewModel);
         }
         [IsMorgue]
-        [Authorize]
         [HttpPost]
         public IActionResult SetIdentificationDate(IdentificationDateViewModel viewModel)
         {
@@ -118,7 +114,6 @@ namespace WebMaze.Controllers
             return RedirectToAction("ShowCorpse", "Morgue");
         }
         [IsMorgue]
-        [Authorize]
         [HttpGet]
         public IActionResult IndentificationCorpse(long corpseId)
         {
@@ -131,7 +126,6 @@ namespace WebMaze.Controllers
             return View(viewModel);
         }
         [IsMorgue]
-        [Authorize]
         [HttpPost]
         public IActionResult IndentificationCorpse(BodyIdentificationReportViewModel viewModel)
         {
@@ -157,13 +151,13 @@ namespace WebMaze.Controllers
             }
             else
             {
-                bodyIdentificationReportRepository.RemoveIdentificationDate(viewModel.CorpseId);
+                var report = bodyIdentificationReportRepository.GetReport(viewModel.CorpseId);
+                bodyIdentificationReportRepository.Delete(report.Id);
                 return RedirectToAction("ShowCorpse", "Morgue");
             }
 
         }
         [IsMorgue]
-        [Authorize]
         public IActionResult ShowDataByCorpse(long corpseId)
         {
             var corpse = registerCardForMorgueRepository.Get(corpseId);
@@ -172,6 +166,103 @@ namespace WebMaze.Controllers
             viewModel.Report = mapper.Map<ForensicReportViewModel>(corpse.ForensicReport);
             viewModel.Identification = mapper.Map<BodyIdentificationReportViewModel>(corpse.BodyIdentificationReport);
             return View(viewModel);
+        }
+        [IsMorgue]
+        [HttpGet]
+        public IActionResult EditRitualService(long serviceId)
+        {
+            var service = ritualServiceRepository.Get(serviceId);
+            var viewModel = mapper.Map<RitualServiceViewModel>(service);
+            return View(viewModel);
+        }
+        [IsMorgue]
+        [HttpPost]
+        public async Task<IActionResult> EditRitualService(RitualServiceViewModel viewModel)
+        {
+            
+            var fileName = viewModel.Photo.FileName;
+            var wwwrootPath = hostEnvironment.WebRootPath;
+            var path = @$"{wwwrootPath}\image\Morgue\{fileName}";
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await viewModel.Photo.CopyToAsync(fileStream);
+            }
+            var service = mapper.Map<RitualService>(viewModel);
+            service.UrlPhoto = $"/image/Morgue/{fileName}";
+            ritualServiceRepository.Save(service);
+            return View();
+        }
+        [HttpGet]
+        [IsMorgue]
+        public IActionResult AddRitualService()
+        {
+            var viewModel = new RitualServiceViewModel();
+            return View(viewModel);
+        }
+        [IsMorgue]
+        [HttpPost]
+        public async Task<IActionResult> AddRitualService(RitualServiceViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+            var fileName = viewModel.Photo.FileName;
+            var wwwrootPath = hostEnvironment.WebRootPath;
+            var path = @$"{wwwrootPath}\image\Morgue\{fileName}";
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await viewModel.Photo.CopyToAsync(fileStream);
+            }
+            var service = mapper.Map<RitualService>(viewModel);
+            service.UrlPhoto = $"/image/Morgue/{fileName}";
+            ritualServiceRepository.Save(service);
+            return View();
+        }
+        public IActionResult ShowRitualService()
+        {
+            var services = ritualServiceRepository.GetAll();
+            var viewModel = mapper.Map<List<RitualServiceViewModel>>(services);
+            var user = userService.GetCurrentUser();
+            return View(viewModel);
+        }
+        [Authorize]
+        public IActionResult Home()
+        {
+            var user = userService.GetCurrentUser();
+            var allCorpses=registerCardForMorgueRepository.GetListOfAllCorpsesOfIdentifier(user.Id);
+            var viewModel = mapper.Map<List<YourCorpsesViewModel>>(allCorpses);
+            return View(viewModel);
+        }
+        [Authorize]
+        public IActionResult ChooseService(long corpseId)
+        {
+            var service = ritualServiceRepository.GetAll();
+            var viewModel = mapper.Map<List<RitualServiceViewModel>>(service);
+            ViewBag.corpseId = corpseId;
+            return View(viewModel);
+        }
+        [Authorize]
+        [HttpGet]
+        public IActionResult OrderFuneral(long corpseId,long serviceId)
+        {
+            var viewModel = new FuneralViewModel();
+            viewModel.RitualServiceId = serviceId;
+            viewModel.CorpseId = corpseId;
+            return View(viewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        public IActionResult OrderFuneral(FuneralViewModel viewModel)
+        {
+            var user = citizenUserRepository.Get(userService.GetCurrentUser().Id);
+            var service = ritualServiceRepository.Get(viewModel.RitualServiceId);
+            user.Balance -= service.Price;
+            citizenUserRepository.Save(user);
+            var funeral = mapper.Map<Funeral>(viewModel);
+            funeral.RitualService = service;
+            funeralRepository.Save(funeral);
+            return View();
         }
     }
 }

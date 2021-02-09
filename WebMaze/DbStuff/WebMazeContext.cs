@@ -31,6 +31,7 @@ namespace WebMaze.DbStuff
         public DbSet<ForensicReport> ForensicReport { get; set; }
         public DbSet<BodyIdentificationReport> BodyIdentificationReport { get; set; }
         public DbSet<RitualService> RitualService { get; set; }
+        public DbSet<Funeral> Funeral { get; set; }
         public WebMazeContext(DbContextOptions dbContext) : base(dbContext) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -52,9 +53,10 @@ namespace WebMaze.DbStuff
                 .HasOne(corpse => corpse.BodyIdentificationReport)
                 .WithOne(date => date.Corpse)
                 .HasForeignKey<BodyIdentificationReport>(key => key.CorpseId);
-            modelBuilder.Entity<RitualService>()
-                .HasMany(sevice => sevice.Corpses)
-                .WithOne(corpse => corpse.RitualService);
+            modelBuilder.Entity<RegisterCardForMorgue>()
+                .HasOne(corpse => corpse.Funeral)
+                .WithOne(funeral => funeral.Corpse)
+                .HasForeignKey<Funeral>(key=>key.CorpseId);
             base.OnModelCreating(modelBuilder);
         }
     }

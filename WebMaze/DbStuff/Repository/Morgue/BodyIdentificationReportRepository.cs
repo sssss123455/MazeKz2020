@@ -12,11 +12,9 @@ namespace WebMaze.DbStuff.Repository.Morgue
         {
 
         }
-        public void RemoveIdentificationDate(long corpseId)
+        public BodyIdentificationReport GetReport(long corpseId)
         {
-            var model = dbSet.SingleOrDefault(x => x.CorpseId == corpseId);
-            dbSet.Remove(model);
-            context.SaveChanges();
+           return dbSet.SingleOrDefault(x => x.CorpseId == corpseId);
         }
     }
 }

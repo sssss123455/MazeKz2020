@@ -11,6 +11,9 @@ namespace WebMaze.DbStuff.Repository.Morgue
         public RegisterCardForMorgueRepository(WebMazeContext context) : base(context)
         {
         }
-        
+        public List<RegisterCardForMorgue> GetListOfAllCorpsesOfIdentifier(long identifyingPersonId)
+        {
+            return dbSet.Where(x=>x.BodyIdentificationReport.IdentifyingPerson.Id == identifyingPersonId && x.Funeral.DateOfFuneral==null).ToList();
+        }
     }  
 }

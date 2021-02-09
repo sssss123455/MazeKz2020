@@ -1,0 +1,23 @@
+﻿@using WebMaze.Models.Morgue
+@model List<RitualServiceViewModel>
+    <table>
+        <tr>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().BurialType)</td>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Price)</td>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Description)</td>
+            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().UrlPhoto)</td>
+        </tr>
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>@item.BurialType</td>
+        <td>@item.Price</td>
+        <td>@item.Description</td>
+        <td><img src="@item.UrlPhoto" /></td>
+        @if (User.Claims.SingleOrDefault(x=>x.Type=="Position")?.Value=="morgue")
+        {
+            <td><div>@Html.ActionLink("изменить ритуальную услугу", "EditRitualService", "Morgue",new  { serviceId=item.Id })</div></td>
+        }
+    </tr>
+        }
+    </table>
