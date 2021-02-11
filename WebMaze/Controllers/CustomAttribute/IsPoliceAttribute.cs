@@ -8,14 +8,14 @@ using WebMaze.Services;
 
 namespace WebMaze.Controllers.CustomAttribute
 {
-    public class IsMorgueAttribute : ActionFilterAttribute
+    public class IsPoliceAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var userSerivece = context.HttpContext.RequestServices
                 .GetService(typeof(UserService)) as UserService;
 
-            if (userSerivece.GetCurrentUser().PlaceOfWork?.ToLower() != "morgue")
+            if (userSerivece.GetCurrentUser().PlaceOfWork?.ToLower() != "police")
             {
                 context.Result = new ForbidResult();
             }

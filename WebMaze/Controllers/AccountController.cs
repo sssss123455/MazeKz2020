@@ -57,12 +57,12 @@ namespace WebMaze.Controllers
             //Строки в документе
             var recordId = new Claim("Id", user.Id.ToString());
             var recordName = new Claim(ClaimTypes.Name, user.Login);
-            var position = "user";
-            if (user.Position != null)
+            var placeOfWork = "user";
+            if (user.PlaceOfWork != null)
             {
-                position = user.Position;
+                placeOfWork = user.PlaceOfWork;
             }
-            var recordPosition = new Claim("Position", position);
+            var recordPosition = new Claim("PlaceOfWork", placeOfWork);
 
             var recordAuthMethod = new Claim(ClaimTypes.AuthenticationMethod, Startup.AuthMethod);
 

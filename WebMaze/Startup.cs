@@ -136,8 +136,10 @@ namespace WebMaze
             configurationExpression.CreateMap<Funeral, FuneralViewModel>()
                 .ForPath(x=>x.RitualServiceId,y=>y.MapFrom(z=>z.RitualService.Id));
             configurationExpression.CreateMap<FuneralViewModel, Funeral>();
-               
             
+            configurationExpression.CreateMap<ContentForMorgue, ContentForMorgueViewModel>();
+            configurationExpression.CreateMap<ContentForMorgueViewModel, ContentForMorgue>();
+
             var mapperConfiguration = new MapperConfiguration(configurationExpression);
             var mapper = new Mapper(mapperConfiguration);
             services.AddScoped<IMapper>(s => mapper);
@@ -168,6 +170,7 @@ namespace WebMaze
             services.AddScoped(s => new BodyIdentificationReportRepository(s.GetService<WebMazeContext>()));
             services.AddScoped(s => new RitualServiceRepository(s.GetService<WebMazeContext>()));
             services.AddScoped(s => new FuneralRepository(s.GetService<WebMazeContext>()));
+            services.AddScoped(s => new ContentForMorgueRepository(s.GetService<WebMazeContext>()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

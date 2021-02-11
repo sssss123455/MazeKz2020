@@ -34,7 +34,7 @@ namespace WebMaze.DbStuff.Model
         public virtual string PhoneNumber { get; set; }
 
         public virtual bool IsDead { get; set; }
-        public virtual string Position { get; set; }
+        public virtual string PlaceOfWork { get; set; }
 
         public virtual DateTime BirthDate { get; set; }
 

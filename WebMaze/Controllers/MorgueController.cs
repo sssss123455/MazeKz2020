@@ -28,11 +28,12 @@ namespace WebMaze.Controllers
         private RitualServiceRepository ritualServiceRepository;
         private IWebHostEnvironment hostEnvironment;
         private FuneralRepository funeralRepository;
+        private ContentForMorgueRepository contentForMorgueRepository;
         public MorgueController(IMapper mapper, RegisterCardForMorgueRepository registerCardForMorgueRepository,
             ForensicReportRepository forensicReportRepository, BodyIdentificationReportRepository bodyIdentificationReportRepository,
             CitizenUserRepository citizenUserRepository, UserService userService, 
             RitualServiceRepository ritualServiceRepository, IWebHostEnvironment hostEnvironment,
-            FuneralRepository funeralRepository)
+            FuneralRepository funeralRepository, ContentForMorgueRepository contentForMorgueRepository)
         {
             this.registerCardForMorgueRepository = registerCardForMorgueRepository;
             this.mapper = mapper;
@@ -43,10 +44,43 @@ namespace WebMaze.Controllers
             this.ritualServiceRepository = ritualServiceRepository;
             this.hostEnvironment = hostEnvironment;
             this.funeralRepository = funeralRepository;
+            this.contentForMorgueRepository = contentForMorgueRepository;
         }
         public IActionResult Index()
         {
-            return View();
+            var viewModel = new ContentForMorgueViewModel();
+            var content = contentForMorgueRepository.GetContent();
+            viewModel = mapper.Map<ContentForMorgueViewModel>(content);
+            return View(viewModel);
+        }
+        [IsMorgue]
+        [HttpGet]
+        public IActionResult EditContent()
+        {
+            var viewModel = new ContentForMorgueViewModel();
+            var content = contentForMorgueRepository.GetContent();
+            viewModel = mapper.Map<ContentForMorgueViewModel>(content);
+            return View(viewModel);
+        }
+        [IsMorgue]
+        [HttpPost]
+        public async Task<IActionResult> EditContent(ContentForMorgueViewModel viewModel)
+        {
+           
+             var content = mapper.Map<ContentForMorgue>(viewModel);
+            if (viewModel.Photo!=null)
+            {
+                var fileName = viewModel.Photo.FileName;
+                var wwwrootPath = hostEnvironment.WebRootPath;
+                var path = @$"{wwwrootPath}\image\Morgue\{fileName}";
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    await viewModel.Photo.CopyToAsync(fileStream);
+                }
+                content.UrlPhoto = $"/image/Morgue/{fileName}";
+            }
+            contentForMorgueRepository.Save(content);
+            return RedirectToAction("Index","Morgue");
         }
         [IsMorgue]
         public IActionResult ShowCorpse()
@@ -179,16 +213,19 @@ namespace WebMaze.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRitualService(RitualServiceViewModel viewModel)
         {
-            
-            var fileName = viewModel.Photo.FileName;
-            var wwwrootPath = hostEnvironment.WebRootPath;
-            var path = @$"{wwwrootPath}\image\Morgue\{fileName}";
-            using (var fileStream = new FileStream(path, FileMode.Create))
-            {
-                await viewModel.Photo.CopyToAsync(fileStream);
-            }
             var service = mapper.Map<RitualService>(viewModel);
-            service.UrlPhoto = $"/image/Morgue/{fileName}";
+            if (viewModel.Photo!=null)
+            {
+                var fileName = viewModel.Photo.FileName;
+                var wwwrootPath = hostEnvironment.WebRootPath;
+                var path = @$"{wwwrootPath}\image\Morgue\{fileName}";
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    await viewModel.Photo.CopyToAsync(fileStream);
+                }
+                service.UrlPhoto = $"/image/Morgue/{fileName}";
+            }
+            
             ritualServiceRepository.Save(service);
             return View();
         }
@@ -263,6 +300,41 @@ namespace WebMaze.Controllers
             funeral.RitualService = service;
             funeralRepository.Save(funeral);
             return View();
+        }
+        [IsMorgue]
+        public IActionResult ShowFuneral()
+        {
+            var corpse = registerCardForMorgueRepository.GetListForFuneral();
+            var viewModel = new List<ListOfFuneralViewModel>();
+            foreach (var item in corpse)
+            {
+                viewModel.Add(new ListOfFuneralViewModel
+                {
+                    NameCorpse = item.Corpse.FirstName,
+                    SurnameCorpse = item.Corpse.LastName,
+                    DateOfBirth = item.Corpse.BirthDate,
+                    DateOfDeath = item.DateOfDeath,
+                    Funeral=mapper.Map<FuneralViewModel>(item.Funeral),
+                    Service=mapper.Map<RitualServiceViewModel>(ritualServiceRepository.Get(item.Funeral.RitualService.Id))
+                });
+            }
+            return View(viewModel);
+        }
+        [IsPolice]
+        public IActionResult ShowListCorpsAutopsy()
+        {
+            var corpses = registerCardForMorgueRepository.GetListCorpsAutopsy();
+            var viewModel = mapper.Map<List<RegisterCardForMorgueViewModel>>(corpses);
+            return View(viewModel);
+        }
+        [IsPolice]
+        public IActionResult ShowReportAutopsy(long corpseId)
+        {
+            var corpse = registerCardForMorgueRepository.Get(corpseId);
+            var viewModel = new DateByAutopsyViewModel();
+            viewModel.Corpse = mapper.Map<RegisterCardForMorgueViewModel>(corpse);
+            viewModel.Report = mapper.Map<ForensicReportViewModel>(corpse.ForensicReport);
+            return View(viewModel);
         }
     }
 }

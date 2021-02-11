@@ -32,12 +32,14 @@ namespace WebMaze.DbStuff
         public DbSet<BodyIdentificationReport> BodyIdentificationReport { get; set; }
         public DbSet<RitualService> RitualService { get; set; }
         public DbSet<Funeral> Funeral { get; set; }
+        public DbSet<ContentForMorgue> ContentForMorgue { get; set; }
         public WebMazeContext(DbContextOptions dbContext) : base(dbContext) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseLazyLoadingProxies();
+            optionsBuilder.EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,18 +47,25 @@ namespace WebMaze.DbStuff
             modelBuilder.Entity<CitizenUser>()
                 .HasMany(citizen => citizen.Adresses)
                 .WithOne(adress => adress.Owner);
+
             modelBuilder.Entity<RegisterCardForMorgue>()
                 .HasOne(corpse => corpse.ForensicReport)
                 .WithOne(report => report.Corpse)
-                .HasForeignKey<ForensicReport>(key => key.CorpseId);
+                .HasForeignKey<ForensicReport>(key => key.CorpseId)
+                .IsRequired(); 
+
             modelBuilder.Entity<RegisterCardForMorgue>()
                 .HasOne(corpse => corpse.BodyIdentificationReport)
                 .WithOne(date => date.Corpse)
-                .HasForeignKey<BodyIdentificationReport>(key => key.CorpseId);
+                .HasForeignKey<BodyIdentificationReport>(key => key.CorpseId)
+                .IsRequired();
+
             modelBuilder.Entity<RegisterCardForMorgue>()
                 .HasOne(corpse => corpse.Funeral)
                 .WithOne(funeral => funeral.Corpse)
-                .HasForeignKey<Funeral>(key=>key.CorpseId);
+                .HasForeignKey<Funeral>(key=>key.CorpseId)
+                .IsRequired();
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,0 +1,19 @@
+﻿@using WebMaze.Models.Morgue
+@model ContentForMorgueViewModel
+<form action="@Url.Action("EditContent", "Morgue")" method="post" enctype="multipart/form-data">
+
+    @Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(x => x.UrlPhoto)
+    <div>
+        @Html.DisplayNameFor(x => x.Text)
+        @Html.TextAreaFor(x => x.Text)
+        @Html.ValidationMessageFor(x => x.Text)
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.UrlPhoto)
+        <input type="file" name="Photo" />
+    </div>
+    <div>
+        <input type="submit" value="Сохранить" />
+    </div>
+</form> 

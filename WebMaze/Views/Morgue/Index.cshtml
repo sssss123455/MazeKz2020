@@ -1,11 +1,22 @@
-﻿@if (User.Claims.SingleOrDefault(x => x.Type == "Position")?.Value == "morgue")
+﻿@using WebMaze.Models.Morgue
+@model ContentForMorgueViewModel
+<div><img src="@Model.UrlPhoto" /></div>
+<div>@Model.Text</div>
+@if (User.Claims.SingleOrDefault(x => x.Type == "PlaceOfWork")?.Value == "morgue")
 {
     <div>@Html.ActionLink("показать список тел", "ShowCorpse", "Morgue")</div>
     <div>@Html.ActionLink("добавить ритуальную услугу", "AddRitualService", "Morgue")</div>
+    <div>@Html.ActionLink("показать заказы на похорны", "ShowFuneral", "Morgue")</div>
+    <div>@Html.ActionLink("редактировать главную страницу", "EditContent", "Morgue")</div>
 }
 
 <div>@Html.ActionLink("показать услуги", "ShowRitualService", "Morgue")</div>
 @if (User.Identity.IsAuthenticated)
 {
     <div>@Html.ActionLink("ваши погибшие", "Home", "Morgue")</div>
+}
+
+@if (User.Claims.SingleOrDefault(x => x.Type == "PlaceOfWork")?.Value == "police")
+{
+    <div>@Html.ActionLink("показать список тел, прошедших вскрытие", "ShowListCorpsAutopsy", "Morgue")</div>
 }

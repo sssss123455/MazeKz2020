@@ -15,5 +15,14 @@ namespace WebMaze.DbStuff.Repository.Morgue
         {
             return dbSet.Where(x=>x.BodyIdentificationReport.IdentifyingPerson.Id == identifyingPersonId && x.Funeral.DateOfFuneral==null).ToList();
         }
+        public List<RegisterCardForMorgue> GetListForFuneral()
+        {
+            return dbSet.Where(x => x.Funeral.DateOfFuneral != null).ToList();
+        }
+        public List<RegisterCardForMorgue> GetListCorpsAutopsy()
+        {
+            return dbSet.Where(x => x.ForensicReport.IsReportRecorded ==true).ToList();
+        }
+        
     }  
 }

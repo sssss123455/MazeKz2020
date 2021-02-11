@@ -14,7 +14,7 @@
         <td>@item.Price</td>
         <td>@item.Description</td>
         <td><img src="@item.UrlPhoto" /></td>
-        @if (User.Claims.SingleOrDefault(x=>x.Type=="Position")?.Value=="morgue")
+        @if (User.Claims.SingleOrDefault(x=>x.Type== "PlaceOfWork")?.Value=="morgue")
         {
             <td><div>@Html.ActionLink("изменить ритуальную услугу", "EditRitualService", "Morgue",new  { serviceId=item.Id })</div></td>
         }
