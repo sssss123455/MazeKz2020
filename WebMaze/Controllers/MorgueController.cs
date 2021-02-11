@@ -227,7 +227,7 @@ namespace WebMaze.Controllers
             }
             
             ritualServiceRepository.Save(service);
-            return View();
+            return RedirectToAction("ShowRitualService", "Morgue");
         }
         [HttpGet]
         [IsMorgue]
@@ -254,7 +254,7 @@ namespace WebMaze.Controllers
             var service = mapper.Map<RitualService>(viewModel);
             service.UrlPhoto = $"/image/Morgue/{fileName}";
             ritualServiceRepository.Save(service);
-            return View();
+            return RedirectToAction("ShowRitualService","Morgue");
         }
         public IActionResult ShowRitualService()
         {
@@ -299,7 +299,7 @@ namespace WebMaze.Controllers
             var funeral = mapper.Map<Funeral>(viewModel);
             funeral.RitualService = service;
             funeralRepository.Save(funeral);
-            return View();
+            return RedirectToAction("Index", "Morgue");
         }
         [IsMorgue]
         public IActionResult ShowFuneral()
