@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using WebMaze.Controllers.CustomAttribute;
 using WebMaze.DbStuff.Model.Morgue;
@@ -31,7 +31,7 @@ namespace WebMaze.Controllers
         private ContentForMorgueRepository contentForMorgueRepository;
         public MorgueController(IMapper mapper, RegisterCardForMorgueRepository registerCardForMorgueRepository,
             ForensicReportRepository forensicReportRepository, BodyIdentificationReportRepository bodyIdentificationReportRepository,
-            CitizenUserRepository citizenUserRepository, UserService userService, 
+            CitizenUserRepository citizenUserRepository, UserService userService,
             RitualServiceRepository ritualServiceRepository, IWebHostEnvironment hostEnvironment,
             FuneralRepository funeralRepository, ContentForMorgueRepository contentForMorgueRepository)
         {
@@ -46,29 +46,32 @@ namespace WebMaze.Controllers
             this.funeralRepository = funeralRepository;
             this.contentForMorgueRepository = contentForMorgueRepository;
         }
+
         public IActionResult Index()
         {
-            var viewModel = new ContentForMorgueViewModel();
+
             var content = contentForMorgueRepository.GetContent();
-            viewModel = mapper.Map<ContentForMorgueViewModel>(content);
+            var viewModel = mapper.Map<ContentForMorgueViewModel>(content);
             return View(viewModel);
         }
         [IsMorgue]
         [HttpGet]
         public IActionResult EditContent()
         {
-            var viewModel = new ContentForMorgueViewModel();
             var content = contentForMorgueRepository.GetContent();
-            viewModel = mapper.Map<ContentForMorgueViewModel>(content);
+            var viewModel = mapper.Map<ContentForMorgueViewModel>(content);
             return View(viewModel);
         }
         [IsMorgue]
         [HttpPost]
         public async Task<IActionResult> EditContent(ContentForMorgueViewModel viewModel)
         {
-           
-             var content = mapper.Map<ContentForMorgue>(viewModel);
-            if (viewModel.Photo!=null)
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+            var content = mapper.Map<ContentForMorgue>(viewModel);
+            if (viewModel.Photo != null)
             {
                 var fileName = viewModel.Photo.FileName;
                 var wwwrootPath = hostEnvironment.WebRootPath;
@@ -80,7 +83,7 @@ namespace WebMaze.Controllers
                 content.UrlPhoto = $"/image/Morgue/{fileName}";
             }
             contentForMorgueRepository.Save(content);
-            return RedirectToAction("Index","Morgue");
+            return RedirectToAction("Index", "Morgue");
         }
         [IsMorgue]
         public IActionResult ShowCorpse()
@@ -213,8 +216,12 @@ namespace WebMaze.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRitualService(RitualServiceViewModel viewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
             var service = mapper.Map<RitualService>(viewModel);
-            if (viewModel.Photo!=null)
+            if (viewModel.Photo != null)
             {
                 var fileName = viewModel.Photo.FileName;
                 var wwwrootPath = hostEnvironment.WebRootPath;
@@ -225,7 +232,7 @@ namespace WebMaze.Controllers
                 }
                 service.UrlPhoto = $"/image/Morgue/{fileName}";
             }
-            
+
             ritualServiceRepository.Save(service);
             return RedirectToAction("ShowRitualService", "Morgue");
         }
@@ -254,34 +261,33 @@ namespace WebMaze.Controllers
             var service = mapper.Map<RitualService>(viewModel);
             service.UrlPhoto = $"/image/Morgue/{fileName}";
             ritualServiceRepository.Save(service);
-            return RedirectToAction("ShowRitualService","Morgue");
+            return RedirectToAction("ShowRitualService", "Morgue");
         }
         public IActionResult ShowRitualService()
         {
-            var services = ritualServiceRepository.GetAll();
+            var services = ritualServiceRepository.GetWorkingServices();
             var viewModel = mapper.Map<List<RitualServiceViewModel>>(services);
-            var user = userService.GetCurrentUser();
             return View(viewModel);
         }
         [Authorize]
         public IActionResult Home()
         {
             var user = userService.GetCurrentUser();
-            var allCorpses=registerCardForMorgueRepository.GetListOfAllCorpsesOfIdentifier(user.Id);
+            var allCorpses = registerCardForMorgueRepository.GetListOfAllCorpsesOfIdentifier(user.Id);
             var viewModel = mapper.Map<List<YourCorpsesViewModel>>(allCorpses);
             return View(viewModel);
         }
         [Authorize]
         public IActionResult ChooseService(long corpseId)
         {
-            var service = ritualServiceRepository.GetAll();
+            var service = ritualServiceRepository.GetWorkingServices();
             var viewModel = mapper.Map<List<RitualServiceViewModel>>(service);
             ViewBag.corpseId = corpseId;
             return View(viewModel);
         }
         [Authorize]
         [HttpGet]
-        public IActionResult OrderFuneral(long corpseId,long serviceId)
+        public IActionResult OrderFuneral(long corpseId, long serviceId)
         {
             var viewModel = new FuneralViewModel();
             viewModel.RitualServiceId = serviceId;
@@ -292,6 +298,11 @@ namespace WebMaze.Controllers
         [HttpPost]
         public IActionResult OrderFuneral(FuneralViewModel viewModel)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
             var user = citizenUserRepository.Get(userService.GetCurrentUser().Id);
             var service = ritualServiceRepository.Get(viewModel.RitualServiceId);
             user.Balance -= service.Price;
@@ -305,19 +316,7 @@ namespace WebMaze.Controllers
         public IActionResult ShowFuneral()
         {
             var corpse = registerCardForMorgueRepository.GetListForFuneral();
-            var viewModel = new List<ListOfFuneralViewModel>();
-            foreach (var item in corpse)
-            {
-                viewModel.Add(new ListOfFuneralViewModel
-                {
-                    NameCorpse = item.Corpse.FirstName,
-                    SurnameCorpse = item.Corpse.LastName,
-                    DateOfBirth = item.Corpse.BirthDate,
-                    DateOfDeath = item.DateOfDeath,
-                    Funeral=mapper.Map<FuneralViewModel>(item.Funeral),
-                    Service=mapper.Map<RitualServiceViewModel>(ritualServiceRepository.Get(item.Funeral.RitualService.Id))
-                });
-            }
+            var viewModel = mapper.Map<List<ListOfFuneralViewModel>>(corpse);
             return View(viewModel);
         }
         [IsPolice]
@@ -336,5 +335,111 @@ namespace WebMaze.Controllers
             viewModel.Report = mapper.Map<ForensicReportViewModel>(corpse.ForensicReport);
             return View(viewModel);
         }
+        [IsMorgue]
+        public IActionResult DeleteRitualService(long serviceId)
+        {
+            var service = ritualServiceRepository.Get(serviceId);
+            service.WasDelete = true;
+            ritualServiceRepository.Save(service);
+            return RedirectToAction("ShowRitualService", "Morgue");
+        }
+        [HttpPost]
+        public IActionResult CheckDate(DateTime dateOfFuneral)
+        {
+            var data = funeralRepository.GetAll();
+            if (data.Any(x => x.DateOfFuneral.ToString("dd.MM.yyyy") == dateOfFuneral.ToString("dd.MM.yyyy")))
+            {
+                return Json(false);
+            }
+            else
+                return Json(true);
+
+
+        }
+        [HttpPost]
+        public IActionResult IsPoliceman(long policeOfficerId)
+        {
+            var user = citizenUserRepository.Get(policeOfficerId);
+            if (user == null)
+            {
+                return Json($"Человека с ID: {policeOfficerId} не существует");
+            }
+            else
+            {
+                if (user.IsDead == true)
+                {
+                    return Json("Введен ID умершего человека");
+                }
+                else if (user.IsBlocked == true)
+                {
+                    return Json("Введен заблокированный ID ");
+                }
+                else if (user.PlaceOfWork?.ToLower() == "police")
+                {
+                    return Json(true);
+                }
+                else
+                    return Json($"Данный человек не является полицейским. Он работает в {user.PlaceOfWork}");
+            }
+
+        }
+        [HttpPost]
+        public IActionResult CheckIdentifyingPerson(long identifyingPersonId)
+        {
+            var user = citizenUserRepository.Get(identifyingPersonId);
+            if (user == null)
+            {
+                return Json($"Человека с ID: {identifyingPersonId} не существует");
+            }
+            else
+            {
+                if (user.IsDead == true)
+                {
+                    return Json("Введен ID умершего человека");
+                }
+                else if (user.IsBlocked == true)
+                {
+                    return Json("Введен заблокированный ID ");
+                }
+                else
+                    return Json(true);
+            }
+        }
+        [HttpPost]
+        public IActionResult CheckCorpse(long userId)
+        {
+            var user = citizenUserRepository.Get(userId);
+            if (user == null)
+            {
+                return Json($"Человека с ID: {userId} не существует");
+            }
+            else
+            {
+                if (user.IsDead == true)
+                {
+                    return Json("Данный человек уже мертв");
+                }
+                else if (user.IsBlocked == true)
+                {
+                    return Json("Введен заблокированный ID ");
+                }
+                else
+                    return Json(true);
+            }
+        }
+        [HttpPost]
+        public IActionResult CheckDateForIdentification(DateTime dateOfIdentification)
+        {
+            var data = registerCardForMorgueRepository.GetAll();
+            if (data.Any(x => x.BodyIdentificationReport.DateOfIdentification.ToString("dd.MM.yyyy") == dateOfIdentification.ToString("dd.MM.yyyy")))
+            {
+                return Json(false);
+            }
+            else
+                return Json(true);
+
+
+        }
     }
 }
+

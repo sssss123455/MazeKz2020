@@ -1,23 +1,31 @@
 ﻿@using WebMaze.Models.Morgue
 @model List<RitualServiceViewModel>
-    <table>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+<div>
+    <h1 class="font-weight-light">Список ритуальных услуг</h1>
+</div>
+<table class="table-sm">
+    <thead>
         <tr>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().BurialType)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Price)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Description)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().UrlPhoto)</td>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().BurialType)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Price)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Description)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().UrlPhoto)</th>
         </tr>
-        @foreach (var item in Model)
-        {
-    <tr>
-        <td>@item.BurialType</td>
-        <td>@item.Price</td>
-        <td>@item.Description</td>
-        <td><img src="@item.UrlPhoto" /></td>
-        @if (User.Claims.SingleOrDefault(x=>x.Type== "PlaceOfWork")?.Value=="morgue")
-        {
-            <td><div>@Html.ActionLink("изменить ритуальную услугу", "EditRitualService", "Morgue",new  { serviceId=item.Id })</div></td>
-        }
-    </tr>
-        }
-    </table>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.BurialType</td>
+            <td>@item.Price</td>
+            <td>@item.Description</td>
+            <td><img class="img-for-morgue-service" src="@item.UrlPhoto" /></td>
+            @if (User.Claims.SingleOrDefault(x => x.Type == "PlaceOfWork")?.Value == "morgue")
+            {
+                <td>@Html.ActionLink("изменить ритуальную услугу", "EditRitualService", "Morgue", new { serviceId = item.Id }, new { @class = "btn btn-outline-secondary" })</td>
+            }
+        </tr>
+    }
+</table>

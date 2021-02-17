@@ -1,63 +1,72 @@
 ﻿@using WebMaze.Models.Morgue
 @model List<RegisterCardForMorgueViewModel>
-<table>
-    <tr>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().Name)</td>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().Surname)</td>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().Gender)</td>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().DateOfDeath)</td>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().DateOfRegister)</td>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().BodyDamage)</td>
-        <td>@Html.DisplayNameFor(x => x.FirstOrDefault().ThingsFromBody)</td>
-
-    </tr>
-    @foreach (var item in Model)
-    {
-<tr>
-    <td>@item.Name</td>
-    <td>@item.Surname</td>
-    <td>@item.Gender</td>
-    <td>@item.DateOfDeath</td>
-    <td>@item.DateOfRegister</td>
-    <td>@item.BodyDamage</td>
-    <td>@item.ThingsFromBody</td>
-    @if (!item.IsIdentified)
-    {
-
-        @if (item.IsReportRecorded == true)
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+<div>
+    <h2 class="font-weight-light">Зарегистрированные трупы</h2>
+</div>
+<table class="table-sm">
+    <thead>
+        <tr>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().Name)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().Surname)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().Gender)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().DateOfDeath)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().DateOfRegister)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().BodyDamage)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.FirstOrDefault().ThingsFromBody)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
         {
-            <td>@Html.ActionLink("Просмотреть судебно медицинскую экспертизу", "ShowReport", "Morgue", new { corpseId = item.Id })</td>
-            @if (item.IsDateSet == false)
-            {
-                <td>@Html.ActionLink("Назанчить опознание", "SetIdentificationDate", "Morgue", new { corpseId = item.Id })</td>
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Surname</td>
+                <td>@item.Gender</td>
+                <td>@item.DateOfDeath.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.DateOfRegister.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.BodyDamage</td>
+                <td>@item.ThingsFromBody</td>
+                @if (!item.IsIdentified)
+                {
 
-            }
-            else
-            {
-                <td>
-                    <div>
-                        @Html.DisplayNameFor(x => x.FirstOrDefault().DateOfIdentification):
-                        @item.DateOfIdentification.ToString("dd/MM/yyyy HH:mm")
-                    </div>
-                </td>
+                    @if (item.IsReportRecorded == true)
+                    {
+                        <td>@Html.ActionLink("Просмотреть судебно медицинскую экспертизу", "ShowReport", "Morgue", new { corpseId = item.Id }, new { @class = "btn btn-outline-secondary" })</td>
+                        @if (item.IsDateSet == false)
+                        {
+                            <td>@Html.ActionLink("Назанчить опознание", "SetIdentificationDate", "Morgue", new { corpseId = item.Id }, new { @class = "btn btn-outline-secondary" })</td>
 
-                <td>@Html.ActionLink("Начать опознание", "IndentificationCorpse", "Morgue", new { corpseId = item.Id })</td>
+                        }
+                        else
+                        {
+                            <td>
+                                <div>
+                                    @Html.DisplayNameFor(x => x.FirstOrDefault().DateOfIdentification):
+                                    @item.DateOfIdentification.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                            </td>
 
-            }
+                            <td>@Html.ActionLink("Начать опознание", "IndentificationCorpse", "Morgue", new { corpseId = item.Id }, new { @class = "btn btn-outline-secondary" })</td>
+
+                        }
+                    }
+                    else
+                    {
+                        <td>@Html.ActionLink("Начать судебно медицинскую экспертизу", "WriteReport", "Morgue", new { corpseId = item.Id }, new { @class = "btn btn-outline-secondary" })</td>
+                    }
+
+                }
+                else
+                {
+                    <td>@Html.ActionLink("Просмотреть полный отчет", "ShowDataByCorpse", "Morgue", new { corpseId = item.Id }, new { @class = "btn btn-outline-secondary" })</td>
+                }
+
+
+            </tr>
         }
-        else
-        {
-            <td>@Html.ActionLink("Начать судебно медицинскую экспертизу", "WriteReport", "Morgue", new { corpseId = item.Id })</td>
-        }
-
-    }
-    else
-    {
-        <td>@Html.ActionLink("Просмотреть полный отчет", "ShowDataByCorpse", "Morgue", new { corpseId = item.Id })</td>
-    }
-
-
-</tr>
-    }
+    </tbody>
 
 </table>

@@ -1,7 +1,15 @@
 ﻿@using WebMaze.Models.Morgue
 @model DateByAutopsyViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
 <div>
-    @Html.DisplayNameFor(x => x.Corpse)
+    <h1 class="font-weight-light">Отчет по вскрытию</h1>
+</div>
+<div class="form-group">
+    <div class="text-hide">
+        @Html.DisplayNameFor(x => x.Corpse)
+    </div>
     <div>
         @Html.DisplayNameFor(x => x.Corpse.Name): @Model.Corpse.Name
     </div>
@@ -17,10 +25,13 @@
     <div>
         @Html.DisplayNameFor(x => x.Corpse.ThingsFromBody): @Model.Corpse.ThingsFromBody
     </div>
+
 </div>
-<hr />
-<div>
-    @Html.DisplayNameFor(x => x.Report)
+<hr class="morgue-hr" />
+<div class="form-group">
+    <div class="text-hide">
+        @Html.DisplayNameFor(x => x.Report)
+    </div>
     <div>
         @Html.DisplayNameFor(x => x.Report.CauseOfDeath): @Model.Report.CauseOfDeath
     </div>

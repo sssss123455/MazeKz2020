@@ -1,62 +1,88 @@
 ﻿@using WebMaze.Models.Morgue
 @model List<ListOfFuneralViewModel>
-<div>Список, кого нужно захоронить</div>
-<table>
-    <tr>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().NameCorpse)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().SurnameCorpse)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfBirth)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfDeath)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.DateOfFuneral)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.Comment)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Service.BurialType)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Service.Description)</td>
-    </tr>
-    @foreach (var item in Model)
-    {
-        @if (item.Funeral.DateOfFuneral > DateTime.Now)
-        {
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+<div>
+    <h1 class="font-weight-light">Список, кого нужно захоронить</h1>
+</div>
+@if (Model.Where(x => x.Funeral.DateOfFuneral > DateTime.Now).Count() == 0)
+{
+    <h3 class="text-center font-weight-light">Список пуст</h3>
+}
+else
+{
+    <table class="table-sm">
+        <thead>
             <tr>
-                <td>@item.NameCorpse</td>
-                <td>@item.SurnameCorpse</td>
-                <td>@item.DateOfBirth</td>
-                <td>@item.DateOfDeath</td>
-                <td>@item.Funeral.DateOfFuneral</td>
-                <td>@item.Funeral.Comment</td>
-                <td>@item.Service.BurialType</td>
-                <td>@item.Service.Description</td>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().NameCorpse)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().SurnameCorpse)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfBirth)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfDeath)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.DateOfFuneral)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.Comment)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Service.BurialType)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Service.Description)</th>
             </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            @if (item.Funeral.DateOfFuneral > DateTime.Now)
+            {
+                <tr>
+                    <td>@item.NameCorpse</td>
+                    <td>@item.SurnameCorpse</td>
+                    <td>@item.DateOfBirth.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.DateOfDeath.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.Funeral.DateOfFuneral.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.Funeral.Comment</td>
+                    <td>@item.Service.BurialType</td>
+                    <td>@item.Service.Description</td>
+                </tr>
+
+            }
 
         }
-
-    }
-</table>
-<div>Список захороненных</div>
-<table>
-    <tr>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().NameCorpse)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().SurnameCorpse)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfBirth)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfDeath)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.DateOfFuneral)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.Comment)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Service.BurialType)</td>
-        <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Service.Description)</td>
-    </tr>
-    @foreach (var item in Model)
-    {
-        @if (item.Funeral.DateOfFuneral < DateTime.Now)
-        {
+    </table>
+}
+<hr class="morgue-hr" />
+<div>
+    <h1 class="font-weight-light">Список захороненных</h1>
+</div>
+@if (Model.Where(x => x.Funeral.DateOfFuneral < DateTime.Now).Count() == 0)
+{
+    <h3 class="text-center font-weight-light">Список пуст</h3>
+}
+else
+{
+    <table class="table-sm">
+        <thead>
             <tr>
-                <td>@item.NameCorpse</td>
-                <td>@item.SurnameCorpse</td>
-                <td>@item.DateOfBirth</td>
-                <td>@item.DateOfDeath</td>
-                <td>@item.Funeral.DateOfFuneral</td>
-                <td>@item.Funeral.Comment</td>
-                <td>@item.Service.BurialType</td>
-                <td>@item.Service.Description</td>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().NameCorpse)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().SurnameCorpse)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfBirth)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfDeath)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.DateOfFuneral)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Funeral.Comment)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Service.BurialType)</th>
+                <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Service.Description)</th>
             </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            @if (item.Funeral.DateOfFuneral < DateTime.Now)
+            {
+                <tr>
+                    <td>@item.NameCorpse</td>
+                    <td>@item.SurnameCorpse</td>
+                    <td>@item.DateOfBirth.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.DateOfDeath.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.Funeral.DateOfFuneral.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.Funeral.Comment</td>
+                    <td>@item.Service.BurialType</td>
+                    <td>@item.Service.Description</td>
+                </tr>
+            }
         }
-    }
-</table>
+    </table>
+}

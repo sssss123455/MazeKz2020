@@ -19,10 +19,8 @@ namespace WebMaze.DbStuff.Model.Morgue
         public virtual Funeral Funeral { get; set; }
         public enum Genders 
         {
-        [Display(Name ="Мужской")]
-        male,
-        [Display(Name ="Женский")]
-        female
+            мужской,
+            женский
         };
     }
 }

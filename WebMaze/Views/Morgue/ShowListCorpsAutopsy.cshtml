@@ -1,24 +1,32 @@
 ﻿@using WebMaze.Models.Morgue
 @model List<RegisterCardForMorgueViewModel>
-    <table>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+<div>
+    <h1 class="font-weight-light">Список тел прошедших вскрытие</h1>
+</div>
+<table class="table-sm">
+    <thead>
         <tr>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Name)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Surname)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfDeath)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().Gender)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().BodyDamage)</td>
-            <td>@Html.DisplayNameFor(x => x.SingleOrDefault().ThingsFromBody)</td>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Name)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Surname)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().DateOfDeath)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().Gender)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().BodyDamage)</th>
+            <th scope="col">@Html.DisplayNameFor(x => x.SingleOrDefault().ThingsFromBody)</th>
         </tr>
+    </thead>
     @foreach (var item in Model)
     {
-    <tr>
-        <td>@item.Name</td>
-        <td>@item.Surname</td>
-        <td>@item.DateOfDeath</td>
-        <td>@item.Gender</td>
-        <td>@item.BodyDamage</td>
-        <td>@item.ThingsFromBody</td>
-        <td> <div>@Html.ActionLink("показать отчет", "ShowReportAutopsy", "Morgue", new  {corpseId=item.Id })</div></td>
-    </tr>
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Surname</td>
+            <td>@item.DateOfDeath.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@item.Gender</td>
+            <td>@item.BodyDamage</td>
+            <td>@item.ThingsFromBody</td>
+            <td> <div>@Html.ActionLink("показать отчет", "ShowReportAutopsy", "Morgue", new { corpseId = item.Id }, new { @class = "btn btn-outline-secondary" })</div></td>
+        </tr>
     }
-    </table>
+</table>

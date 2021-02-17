@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.ComponentModel;
 using WebMaze.DbStuff;
 using WebMaze.DbStuff.Model;
 using WebMaze.DbStuff.Model.Morgue;
@@ -45,7 +46,6 @@ namespace WebMaze
                     config.LoginPath = "/Account/Login";
                     config.AccessDeniedPath = "/Account/AccessDenied";
                 });
-
             RegistrationMapper(services);
 
             RegistrationRepository(services);
@@ -140,6 +140,14 @@ namespace WebMaze
             configurationExpression.CreateMap<ContentForMorgue, ContentForMorgueViewModel>();
             configurationExpression.CreateMap<ContentForMorgueViewModel, ContentForMorgue>();
 
+            configurationExpression.CreateMap<RegisterCardForMorgue, ListOfFuneralViewModel>()
+                .ForPath(x=>x.NameCorpse,y=>y.MapFrom(z=>z.Corpse.FirstName))
+                .ForPath(x => x.SurnameCorpse, y => y.MapFrom(z => z.Corpse.LastName))
+                .ForPath(x => x.DateOfBirth, y => y.MapFrom(z => z.Corpse.BirthDate))
+                .ForPath(x => x.Service, y => y.MapFrom(z => z.Funeral.RitualService));
+            
+            configurationExpression.CreateMap<ListOfFuneralViewModel, RegisterCardForMorgue>();
+            
             var mapperConfiguration = new MapperConfiguration(configurationExpression);
             var mapper = new Mapper(mapperConfiguration);
             services.AddScoped<IMapper>(s => mapper);

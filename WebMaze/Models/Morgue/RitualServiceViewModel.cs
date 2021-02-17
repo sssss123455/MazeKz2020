@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,14 +13,17 @@ namespace WebMaze.Models.Morgue
     {
         public long Id { get; set; }
         [Display(Name = "Тип захоронения")]
-        public  BurialTypes BurialType { get; set; }
+        [Required(ErrorMessage = "Выберите тип")]
+        public BurialTypes BurialType { get; set; }
         [Display(Name ="Цена")]
+        [Required(ErrorMessage ="Укажите стоимость")]
         public  decimal Price { get; set; }
         [Display(Name ="Описание")]
+        [Required(ErrorMessage ="Заполните описание")]
         public  string Description { get; set; }
         [Display(Name ="Фото")]
         public  string UrlPhoto { get; set; }
-        
         public IFormFile Photo { get; set; }
+        public bool WasDelete { get; set; }
     }
 }

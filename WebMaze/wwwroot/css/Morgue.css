@@ -1,0 +1,47 @@
+﻿.main-photo {
+    width: 100%;
+}
+.main-text {
+    font-style: oblique;
+    font-weight: bold;
+    font-size: medium;
+    font-family: 'Century Gothic'
+}
+.button-link {
+    background-color: grey;
+    border: none;
+    color: white;
+    padding: 1px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+    .button-link:hover {
+        color:black;
+        text-decoration: none;
+    }
+.img-thumbnail {
+    max-width:80%;
+}
+.form-control {
+    max-width: 100%;
+    width: 100%;
+}
+.morgue-hr{
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+.img-for-morgue-service {
+    max-height: 150px;
+    max-width: 150px;
+}
+.field-validation-error {
+    font-size: 15px;
+    color: red;
+}

@@ -1,15 +1,24 @@
 ﻿@using WebMaze.Models.Morgue
-@model  IdentificationDateViewModel
-
+@model IdentificationDateViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
+<div>
+    <h2 class="font-weight-light">Установить дату опознания</h2>
+</div>
 <form action="@Url.Action("SetIdentificationDate", "Morgue")" method="post">
-    @Html.HiddenFor(x=>x.CorpseId)
-    <div>
+    @Html.HiddenFor(x => x.CorpseId)
+    <div class="form-group">
         @Html.DisplayNameFor(x => x.DateOfIdentification)
-        @Html.EditorFor(x => x.DateOfIdentification)
+        @Html.EditorFor(x => x.DateOfIdentification, new { htmlAttributes = new { @class = "form-control" } })
         @Html.ValidationMessageFor(x => x.DateOfIdentification)
 
     </div>
     <div>
-        <input type="submit" value="Сохронить" />
+        <input class="btn btn-outline-secondary" type="submit" value="Сохронить" />
     </div>
 </form>

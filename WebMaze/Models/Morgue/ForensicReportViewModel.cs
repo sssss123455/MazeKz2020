@@ -13,6 +13,7 @@ namespace WebMaze.Models.Morgue
         [Required(ErrorMessage ="Укажите причину смерти")]
         public  string CauseOfDeath { get; set; }
         [Display(Name ="Комментарий")]
+        [Required(ErrorMessage = "Укажите комментарий")]
         public  string Comment { get; set; }
         [Display(Name ="Дата проведения")]
         public  DateTime DateOfForensic { get; set; }

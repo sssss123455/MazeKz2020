@@ -1,19 +1,25 @@
 ﻿@using WebMaze.Models.Morgue
 @model ContentForMorgueViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+<div>
+    <h2 class="font-weight-light">Изменение данных с главной страницы</h2>
+</div>
 <form action="@Url.Action("EditContent", "Morgue")" method="post" enctype="multipart/form-data">
 
-    @Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(x => x.Id)
     @Html.HiddenFor(x => x.UrlPhoto)
-    <div>
+    <div class=" form-group">
         @Html.DisplayNameFor(x => x.Text)
-        @Html.TextAreaFor(x => x.Text)
+        @Html.TextAreaFor(x => x.Text, new { @class = "form-control" })
         @Html.ValidationMessageFor(x => x.Text)
     </div>
-    <div>
+    <div class="form-group">
         @Html.DisplayNameFor(x => x.UrlPhoto)
-        <input type="file" name="Photo" />
+        <div class="form-control-file"> <input type="file" name="Photo" value="Загрузить фото" /></div>
     </div>
     <div>
-        <input type="submit" value="Сохранить" />
+        <input class="btn btn-outline-secondary" type="submit" value="Сохранить" />
     </div>
 </form> 

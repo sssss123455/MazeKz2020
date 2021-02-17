@@ -1,38 +1,48 @@
 ﻿@using WebMaze.Models.Morgue
 @model BodyIdentificationReportViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}
+<div>
+    <h1 class="font-weight-light">Отчет по опознанию</h1>
+</div>
 <form action="@Url.Action("IndentificationCorpse","Morgue")" method="post">
     @Html.HiddenFor(x => x.CorpseId)
     @Html.HiddenFor(x => x.DateOfIdentification)
     @Html.HiddenFor(x => x.Id)
-    <div>
+    <div class="form-group">
         @Html.DisplayNameFor(x => x.PoliceOfficerId):
-        @Html.TextBoxFor(x => x.PoliceOfficerId)
+        @Html.TextBoxFor(x => x.PoliceOfficerId, new { htmlAttributes = new { @class = "form-control" } })
         @Html.ValidationMessageFor(x => x.PoliceOfficerId)
     </div>
-    <div>
+    <div class="form-group">
         @Html.DisplayNameFor(x => x.IdentifyingPersonId):
-        @Html.TextBoxFor(x => x.IdentifyingPersonId)
+        @Html.TextBoxFor(x => x.IdentifyingPersonId, new { htmlAttributes = new { @class = "form-control" } })
         @Html.ValidationMessageFor(x => x.IdentifyingPersonId)
     </div>
-    <div>
+    <div class="form-group">
         @Html.DisplayNameFor(x => x.IsIdentified):
         @Html.RadioButtonFor(x => x.IsIdentified, "true")@Html.Label("опознан(-а):")
         @Html.RadioButtonFor(x => x.IsIdentified, "false")@Html.Label("не опознан(-а):")
         @Html.ValidationMessageFor(x => x.IsIdentified)
     </div>
-    @if (Model.UserId==0)
+    @if (Model.UserId == 0)
     {
-    <div>
-        @Html.DisplayNameFor(x => x.UserId):
-        @Html.EditorFor(x => x.UserId)
-        @Html.ValidationMessageFor(x=>x.UserId)
-    </div>
+        <div class="form-group">
+            @Html.DisplayNameFor(x => x.UserId):
+            @Html.TextBoxFor(x => x.UserId, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(x => x.UserId)
+        </div>
     }
-    else 
+    else
     {
-        @Html.HiddenFor(x=>x.UserId)
+        @Html.HiddenFor(x => x.UserId)
     }
     <div>
-        <input type="submit" value="Сохронить" />
+        <input class="btn btn-outline-secondary" type="submit" value="Сохронить" />
     </div>
 </form>

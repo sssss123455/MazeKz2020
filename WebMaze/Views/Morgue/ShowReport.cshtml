@@ -1,48 +1,56 @@
 ﻿@using WebMaze.Models.Morgue
 @model DataForShowReportViewModel
+@section Styles {
+    <link rel="stylesheet" href="~/css/Morgue.css?t=@DateTime.Now.Ticks" />
+}
 <div>
-    @Html.DisplayNameFor(x => x.Corpse.Name): 
-    @Model.Corpse.Name
+    <h1 class="font-weight-light">Отчет по вскрытию</h1>
 </div>
-<div>
-    @Html.DisplayNameFor(x => x.Corpse.Surname): 
-    @Model.Corpse.Surname
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Corpse.Gender): 
-    @Model.Corpse.Gender
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Corpse.DateOfDeath): 
-    @Model.Corpse.DateOfDeath.ToString("dd.MM.yyyy")
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Corpse.BodyDamage): 
-    @Model.Corpse.BodyDamage
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Corpse.ThingsFromBody): 
-    @Model.Corpse.ThingsFromBody
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Report.CauseOfDeath): 
-    @Model.Report.CauseOfDeath
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Report.Comment): 
-    @Model.Report.Comment
-</div>
-<div>
-    @Html.DisplayNameFor(x => x.Report.Pathologist)
+<div class="form-group">
     <div>
-        Имя: @Model.Report.Pathologist.FirstName
+        @Html.DisplayNameFor(x => x.Corpse.Name):
+        @Model.Corpse.Name
     </div>
     <div>
-        Фамилия: @Model.Report.Pathologist.LastName
+        @Html.DisplayNameFor(x => x.Corpse.Surname):
+        @Model.Corpse.Surname
     </div>
-</div>
+    <div>
+        @Html.DisplayNameFor(x => x.Corpse.Gender):
+        @Model.Corpse.Gender
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Corpse.DateOfDeath):
+        @Model.Corpse.DateOfDeath.ToString("dd.MM.yyyy")
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Corpse.BodyDamage):
+        @Model.Corpse.BodyDamage
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Corpse.ThingsFromBody):
+        @Model.Corpse.ThingsFromBody
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Report.CauseOfDeath):
+        @Model.Report.CauseOfDeath
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Report.Comment):
+        @Model.Report.Comment
+    </div>
+    <div>
+        @Html.DisplayNameFor(x => x.Report.Pathologist)
+        <div>
+            Имя: @Model.Report.Pathologist.FirstName
+        </div>
+        <div>
+            Фамилия: @Model.Report.Pathologist.LastName
+        </div>
+    </div>
 
-<div>
-    @Html.DisplayNameFor(x => x.Report.DateOfForensic): 
-    @Model.Report.DateOfForensic.ToString("dd.MM.yyyy HH:mm")
+    <div>
+        @Html.DisplayNameFor(x => x.Report.DateOfForensic):
+        @Model.Report.DateOfForensic.ToString("dd.MM.yyyy HH:mm")
+    </div>
 </div>

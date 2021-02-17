@@ -13,7 +13,7 @@ namespace WebMaze.Models.Morgue
         [Display(Name = "Фото")]
         public  string UrlPhoto { get; set; }
         [Display(Name = "Текст")]
-        [Required(ErrorMessage ="Заполните текст")]
+        [Required(ErrorMessage ="Введите текст")]
         public  string Text { get; set; }
         public IFormFile Photo { get; set; }
     }
